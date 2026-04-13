@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bill Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .bill-container {
+      background: #fff;
+      border: 2px solid #333;
+      padding: 20px;
+      width: 600px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 6px;
+      margin: 5px 0 15px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #3498db;
+      color: white;
+    }
+    .summary {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="bill-container">
+    <h2>🛒 Bill Generator</h2>
+    <label for="items">Enter number of items:</label>
+    <input type="number" id="items" placeholder="Number of items">
+    <button onclick="generateBill()">Generate Bill</button>
+
+    <div id="bill-output"></div>
+  </div>
+
+  <script>
+    function generateBill() {
+      const numItems = parseInt(document.getElementById("items").value);
+
+      if (isNaN(numItems) || numItems <= 0) {
+        alert("Please enter a valid number of items.");
+        return;
+      }
+
+      // Array to store item prices
+      let prices = [];
+
+      // Collect prices using loop
+      for (let i = 0; i < numItems; i++) {
+        let price = parseFloat(prompt("Enter price of item " + (i+1) + ":"));
+        if (isNaN(price) || price < 0) {
+          alert("Invalid price entered. Please try again.");
+          return;
+        }
+        prices.push(price);
+      }
+
+      // Calculate total
+      let total = prices.reduce((sum, val) => sum + val, 0);
+
+      // Apply discount if applicable
+      let discount = 0;
+      if (total > 5000) {
+        discount = total * 0.10;
+      }
+      let finalAmount = total - discount;
+
+      // Build table dynamically
+      let tableHTML = "<table><tr><th>Item No.</th><th>Price (₹)</th></tr>";
+      prices.forEach((price, index) => {
+        tableHTML += `<tr><td>${index+1}</td><td>${price.toFixed(2)}</td></tr>`;
+      });
+      tableHTML += "</table>";
+
+      // Display bill summary
+      document.getElementById("bill-output").innerHTML = `
+        ${tableHTML}
+        <div class="summary">
+          Total Bill: ₹${total.toFixed(2)} <br>
+          ${discount > 0 ? "Discount Applied: ₹" + discount.toFixed(2) + "<br>" : ""}
+          Final Payable Amount: ₹${finalAmount.toFixed(2)}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
